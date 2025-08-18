@@ -1,0 +1,26 @@
+// this is a comment
+(( )){} // grouping stuff
+!*+-/=<> <= == // operators
+
+"hello world"
+
+/* this is some text */
+
+3.14
+// comment
+100
+
+var
+
+print
+
+if
+
+else 
+
+/*
+   hello world
+   this is some text
+ */
+
+print "hey brother"
