@@ -4,7 +4,7 @@ Token::Token(TokenType type_, std::string lexeme_, Object literal_, int line_) :
 
 std::string Token::toString() {
 
-  std::string token_type = tokenTypeToString(type);
+  std::string token_type = std::to_string(line) + ": " + tokenTypeToString(type);
 
   if (holds_alternative<double>(literal)) {
     return token_type + " " + lexeme + " " + std::to_string(std::get<double>(literal));
@@ -13,5 +13,5 @@ std::string Token::toString() {
   } else {
     return token_type + " " + lexeme + " null" ;
   }
-
 }
+

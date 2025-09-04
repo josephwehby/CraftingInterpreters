@@ -16,5 +16,5 @@ private:
   TokenType type;
   std::string lexeme;
   Object literal;
-  int line;
+  unsigned int line;
 };

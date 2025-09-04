@@ -29,9 +29,9 @@ private:
   std::string text;
   std::vector<Token> tokens;
 
-  int start = 0;
-  int current = 0;
-  int line = 1;
+  unsigned int start = 0;
+  unsigned int current = 0;
+  unsigned int line = 1;
 
   bool has_error = false;
 
