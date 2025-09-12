@@ -9,7 +9,7 @@ void Lox::runFile(const std::string file) {
 
   run(text);
 
-  if (has_error) return;
+  if (Error::hadError) return;
 }
 
 void Lox::runPrompt() {
@@ -19,7 +19,7 @@ void Lox::runPrompt() {
   while (std::getline(std::cin, line)) {
     if (std::cin.eof()) break;
     run(line);
-    has_error = false;
+    Error::hadError = false;
     std::cout << "> ";
   }
 }
@@ -27,8 +27,6 @@ void Lox::runPrompt() {
 void Lox::run(std::string text) {
   Scanner scanner(text);
   std::vector<Token> tokens = scanner.scanTokens();
-
-  if (scanner.hasError()) has_error = true;
 
   for (Token token : tokens) {
     std::cout << token.toString() << std::endl;

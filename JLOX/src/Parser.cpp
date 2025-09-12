@@ -89,6 +89,12 @@ bool Parser::isAtEnd() {
   return peek().type == TokenType::END;
 }
 
+Token Parser::consume(TokenType type, std::string message) {
+  if (check(type)) return advance();
+
+  Error::error(peek(), message);
+}
+
 Token Parser::advance() {
   if (!isAtEnd()) current++;
   return previous();

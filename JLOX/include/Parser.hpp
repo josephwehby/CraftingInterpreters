@@ -6,7 +6,8 @@
 
 #include "Token.hpp"
 #include "TokenType.hpp"
-#include "Exprs.hpp"
+#include "Expr.hpp"
+#include "Error.hpp"
 
 class Parser {
 public:
@@ -23,6 +24,7 @@ private:
   bool check(TokenType);
   bool isAtEnd();
 
+  Token consume(TokenType, std::string);
   Token advance();
   Token peek();
   Token previous();

@@ -7,12 +7,12 @@
 
 #include "Token.hpp"
 #include "Helper.hpp"
+#include "Error.hpp"
 
 class Scanner {
 public:
   Scanner(std::string&);
   std::vector<Token> scanTokens();
-  bool hasError();
 private:
   void scanToken();
   void string();
@@ -32,8 +32,6 @@ private:
   unsigned int start = 0;
   unsigned int current = 0;
   unsigned int line = 1;
-
-  bool has_error = false;
 
   std::unordered_map<std::string, TokenType> keywords = {
     {"and", TokenType::AND},

@@ -14,4 +14,4 @@ private:
     result += ")";
     return result;
   }
-}
+};

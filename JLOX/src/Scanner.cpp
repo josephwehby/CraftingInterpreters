@@ -58,7 +58,7 @@ void Scanner::scanToken() {
       } else if (isalpha(c)) {
         identifier();
       } else {
-        error(line, "Unexpected character."); has_error = true; break;
+        Error::error(line, "Unexpected character.");
       }
   };
 }
@@ -70,8 +70,7 @@ void Scanner::string() {
   }
 
   if (current >= text.size()) {
-    error(line, "Unterminated string.");
-    has_error = true;
+    Error::error(line, "Unterminated string.");
     return;
   }
 
@@ -122,11 +121,7 @@ void Scanner::blockComment() {
     advance();
   }
 
-  error(line, "No closing */ for block comment.");
-}
-
-bool Scanner::hasError() {
-  return has_error;
+  Error::error(line, "No closing */ for block comment.");
 }
 
 char Scanner::advance() {
