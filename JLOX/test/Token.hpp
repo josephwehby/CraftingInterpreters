@@ -6,13 +6,13 @@
 #include "TokenType.hpp"
 #include "Helper.hpp"
 
-using Object = std::variant<std::monostate, std::string, double>;
+using Object = std::variant<std::monostate, std::string, double, bool>;
 
 class Token {
 public:
   Token(TokenType, std::string, Object, int);
   std::string toString();
-  //private:
+
   TokenType type;
   std::string lexeme;
   Object literal;

@@ -9,9 +9,12 @@
 #include "Expr.hpp"
 #include "Error.hpp"
 
+struct ParseError {};
+
 class Parser {
 public:
   Parser(std::vector<Token>);
+  std::unique_ptr<Expr> parse();
 private:
   std::unique_ptr<Expr> expression();
   std::unique_ptr<Expr> equality();
@@ -21,6 +24,10 @@ private:
   std::unique_ptr<Expr> unary();
   std::unique_ptr<Expr> primary();
 
+  void synchronize();
+
+  ParseError error(Token, std::string);
+
   bool check(TokenType);
   bool isAtEnd();
 
@@ -29,7 +36,7 @@ private:
   Token peek();
   Token previous();
 
-  template<typename Args...>
+  template<typename... Args>
   bool match(Args... args) {
     for (TokenType type : {args...}) {
       if (check(type)) {

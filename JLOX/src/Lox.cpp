@@ -28,7 +28,11 @@ void Lox::run(std::string text) {
   Scanner scanner(text);
   std::vector<Token> tokens = scanner.scanTokens();
 
-  for (Token token : tokens) {
-    std::cout << token.toString() << std::endl;
-  }
+  Parser parser(tokens);
+  auto expression = parser.parse();
+
+  if (Error::hadError) return;
+
+  PrettyPrinter printer;
+  std::cout << expression->accept(printer) << std::endl;
 }

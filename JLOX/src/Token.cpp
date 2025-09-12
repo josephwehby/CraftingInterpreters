@@ -10,6 +10,8 @@ std::string Token::toString() {
     return token_type + " " + lexeme + " " + std::to_string(std::get<double>(literal));
   } else if (holds_alternative<std::string>(literal)){
     return token_type + " " + lexeme + " " + std::get<std::string>(literal);
+  } else if (holds_alternative<bool>(literal)) {
+    return token_type + " " + lexeme + " " + std::to_string(std::get<bool>(literal));
   } else {
     return token_type + " " + lexeme + " null" ;
   }

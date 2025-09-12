@@ -8,6 +8,8 @@
 #include "Helper.hpp"
 #include "Error.hpp"
 #include "Scanner.hpp"
+#include "Parser.hpp"
+#include "PrettyPrinter.hpp"
 
 class Lox {
 public:
