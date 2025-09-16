@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 
+#include "Object.hpp"
 #include "Token.hpp"
 #include "TokenType.hpp"
 #include "Expr.hpp"

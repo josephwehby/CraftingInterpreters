@@ -9,7 +9,7 @@ void Lox::runFile(const std::string file) {
 
   run(text);
 
-  if (Error::hadError) return;
+  if (Error::hadError || Error::hadRuntimeError) return;
 }
 
 void Lox::runPrompt() {
@@ -35,4 +35,6 @@ void Lox::run(std::string text) {
 
   PrettyPrinter printer;
   std::cout << expression->accept(printer) << std::endl;
+
+  interpreter.interpret(expression);
 }

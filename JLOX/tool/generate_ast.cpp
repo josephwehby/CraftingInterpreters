@@ -169,7 +169,7 @@ int main(int argc, char** argv) {
     "Grouping:Expr expression",
     "Literal:Object value",
     "Unary:Token op,Expr right"
-  }, {"String"});
+  }, {"String", "Object"});
 
 
 }

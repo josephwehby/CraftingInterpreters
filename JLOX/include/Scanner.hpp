@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 
+#include "Object.hpp"
 #include "Token.hpp"
 #include "Helper.hpp"
 #include "Error.hpp"

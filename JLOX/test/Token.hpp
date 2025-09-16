@@ -3,10 +3,9 @@
 #include <variant>
 #include <string>
 
+#include "Object.hpp"
 #include "TokenType.hpp"
 #include "Helper.hpp"
-
-using Object = std::variant<std::monostate, std::string, double, bool>;
 
 class Token {
 public:

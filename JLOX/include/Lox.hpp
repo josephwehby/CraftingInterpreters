@@ -10,6 +10,7 @@
 #include "Scanner.hpp"
 #include "Parser.hpp"
 #include "PrettyPrinter.hpp"
+#include "Interpreter.hpp"
 
 class Lox {
 public:
@@ -17,4 +18,5 @@ public:
   void runPrompt();
 private:
   void run(std::string);
+  Interpreter interpreter;
 };

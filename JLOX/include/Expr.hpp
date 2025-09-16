@@ -1,9 +1,12 @@
 #pragma once
 
 #include <memory>
+
+#include "Object.hpp"
 #include "Token.hpp"
 
 class VisitorString;
+class VisitorObject;
 class Binary;
 class Grouping;
 class Literal;
@@ -13,6 +16,7 @@ class Expr {
 public:
   virtual ~Expr() = default;
   virtual std::string accept(VisitorString&) = 0;
+  virtual Object accept(VisitorObject&) = 0;
 };
 
 class VisitorString {
@@ -23,12 +27,24 @@ public:
   virtual std::string VisitUnary(Unary& expr) = 0;
 };
 
+class VisitorObject {
+public:
+  virtual Object VisitBinary(Binary& expr) = 0;
+  virtual Object VisitGrouping(Grouping& expr) = 0;
+  virtual Object VisitLiteral(Literal& expr) = 0;
+  virtual Object VisitUnary(Unary& expr) = 0;
+};
+
 class Binary : public Expr {
 public:
   Binary(std::unique_ptr<Expr> left, Token op, std::unique_ptr<Expr> right) : 
     left(std::move(left)), op(std::move(op)), right(std::move(right)){}
 
   std::string accept(VisitorString& visitor) override {
+    return visitor.VisitBinary(*this);
+  }
+
+  Object accept(VisitorObject& visitor) override {
     return visitor.VisitBinary(*this);
   }
 
@@ -46,6 +62,10 @@ public:
     return visitor.VisitGrouping(*this);
   }
 
+  Object accept(VisitorObject& visitor) override {
+    return visitor.VisitGrouping(*this);
+  }
+
   std::unique_ptr<Expr> expression;
 };
 
@@ -58,6 +78,10 @@ public:
     return visitor.VisitLiteral(*this);
   }
 
+  Object accept(VisitorObject& visitor) override {
+    return visitor.VisitLiteral(*this);
+  }
+
   Object value;
 };
 
@@ -67,6 +91,10 @@ public:
     op(std::move(op)), right(std::move(right)){}
 
   std::string accept(VisitorString& visitor) override {
+    return visitor.VisitUnary(*this);
+  }
+
+  Object accept(VisitorObject& visitor) override {
     return visitor.VisitUnary(*this);
   }
 

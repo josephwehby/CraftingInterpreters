@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "Object.hpp"
+#include "Token.hpp"
 #include "TokenType.hpp"
 
 inline std::string tokenTypeToString(TokenType type) {
@@ -87,4 +89,14 @@ inline std::string tokenTypeToString(TokenType type) {
     default:
       return "UKNOWN";
   }
+}
+
+inline double toDouble(const Object& object) {
+  if (auto num = std::get_if<double>(&object)) return *num;
+  return 0;
+}
+
+inline std::string toString(const Object& object) {
+  if (auto text = std::get_if<std::string>(&object)) return *text;
+  return "";
 }

@@ -3,6 +3,7 @@
 #include <variant>
 #include <string>
 
+#include "Object.hpp"
 #include "TokenType.hpp"
 #include "Helper.hpp"
 
