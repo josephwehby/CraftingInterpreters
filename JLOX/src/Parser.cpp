@@ -2,8 +2,31 @@
 
 Parser::Parser(std::vector<Token> tokens_) : tokens(tokens_) {}
 
-std::unique_ptr<Expr> Parser::parse() {
-  return expression();
+std::vector<std::unique_ptr<Stmt>> Parser::parse() {
+  std::vector<std::unique_ptr<Stmt>> statements;
+
+  while (!isAtEnd()) {
+    statements.push_back(statement());
+  }
+
+  return statements;
+}
+
+std::unique_ptr<Stmt> Parser::statement() {
+  if (match(TokenType::PRINT)) return printStatement();
+  return expressionStatement();
+}
+
+std::unique_ptr<Stmt> Parser::printStatement() {
+  auto value = expression();
+  consume(TokenType::SEMICOLON, "Expect ';' after value");
+  return std::make_unique<Print>(value);
+}
+
+std::unique_ptr<Stmt> Parser::expressionStatement() {
+  auto expr = expression();
+  consume(TokenType::SEMICOLON, "Expect ';' after value");
+  return std::make_unique<Expression>(expr);
 }
 
 std::unique_ptr<Expr> Parser::expression() {

@@ -8,6 +8,7 @@
 #include "Token.hpp"
 #include "TokenType.hpp"
 #include "Expr.hpp"
+#include "Stmt.hpp"
 #include "Error.hpp"
 
 struct ParseError {};
@@ -15,8 +16,11 @@ struct ParseError {};
 class Parser {
 public:
   Parser(std::vector<Token>);
-  std::unique_ptr<Expr> parse();
+  std::vector<std::unique_ptr<Stmt>> parse();
 private:
+  std::unique_ptr<Stmt> statement();
+  std::unique_ptr<Stmt> printStatement();
+  std::unique_ptr<Stmt> expressionStatement();
   std::unique_ptr<Expr> expression();
   std::unique_ptr<Expr> equality();
   std::unique_ptr<Expr> comparison();

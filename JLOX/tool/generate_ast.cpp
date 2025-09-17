@@ -24,7 +24,7 @@ std::string lower(std::string text) {
 
 void defineType(std::ofstream& file, std::string basename, std::string classname, std::string fields, std::vector<std::string> visitor_types) {
 
-  file << "class " << classname << " : public Expr {\n";
+  file << "class " << classname << " : public " << basename << " {\n";
   file << "public:\n";
   file << "  " << classname << "(";
 
@@ -76,7 +76,7 @@ void defineType(std::ofstream& file, std::string basename, std::string classname
       file << "std::";
     }
     file << return_type;
-    file << " accept(Visitor" << visitor << "& " << "visitor) override {\n";
+    file << " accept(Visitor" << basename << visitor << "& " << "visitor) override {\n";
     file << "    return visitor.Visit" << classname << "(*this);\n";
     file << "  }\n\n";
   }
@@ -87,7 +87,7 @@ void defineType(std::ofstream& file, std::string basename, std::string classname
 }
 
 void defineVisitor(std::ofstream& file, std::string basename, std::vector<std::string> classnames, std::string visitor_class_type) {
-  file << "class Visitor" << visitor_class_type << " {\n";
+  file << "class Visitor" << basename << visitor_class_type << " {\n";
   file << "public:\n";
 
   std::string return_type = lower(visitor_class_type);
@@ -126,16 +126,16 @@ void defineAST(std::string output_dir, std::string basename, std::vector<std::st
   }
 
   for (auto& visitor : visitors) {
-    file << "class Visitor" << visitor << ";\n";
+    file << "class Visitor" << basename << visitor << ";\n";
   }
 
   for (const auto& name : classnames) {
     file << "class " << name << ";\n";
   }
 
-  file << "\nclass Expr {\n";
+  file << "\nclass " << basename << " {\n";
   file << "public:\n";
-  file << "  virtual ~Expr() = default;\n";
+  file << "  virtual ~" << basename << "() = default;\n";
   for (const auto& visitor : visitors) {
     file << "  virtual ";
     std::string return_type = lower(visitor);
@@ -171,5 +171,8 @@ int main(int argc, char** argv) {
     "Unary:Token op,Expr right"
   }, {"String", "Object"});
 
-
+  defineAST(argv[1], "Stmt", {
+    "Expression:Expr expression",
+    "Print:Expr expression"
+  }, {"Void","Object"});
 }

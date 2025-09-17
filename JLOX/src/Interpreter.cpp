@@ -1,12 +1,17 @@
 #include "Interpreter.hpp"
 
-void Interpreter::interpret(const std::unique_ptr<Expr>& expression) {
+void Interpreter::interpret(const std::vector<std::unique_ptr<Stmt>>& statements) {
   try {
-    Object value = evaluate(*expression);
-    std::cout << stringify(value) << std::endl;
+    for (auto& statement : statements) {
+      execute(statement);
+    }
   } catch (const RuntimeError& error) {
     Error::runtimeError(error);
   }
+}
+
+void Interpreter::execute(const std::unique_ptr<Stmt>& stmt) {
+  stmt->accept(*this);
 }
 
 Object Interpreter::VisitBinary(Binary& expr) {
@@ -84,6 +89,15 @@ Object Interpreter::VisitUnary(Unary& expr) {
   return {};
 }
 
+void Interpreter::VisitExpression(Expression& stmt) {
+  evaluate(*stmt.expression);
+}
+
+void Interpreter::VisitPrint(Print& stmt) {
+  Object value = evaluate(*stmt.expression);
+  std::cout << stringify(value) << std::endl;
+}
+
 Object Interpreter::evaluate(Expr& expr) {
   return expr.accept(*this);
 }
@@ -119,7 +133,13 @@ std::string Interpreter::stringify(Object& object) {
     return text;
   }
 
-  return "";
+  if (auto val = std::get_if<bool>(&object)) {
+    return (*val == true) ? "true" : "false";
+  }
+
+  if (auto val = std::get_if<std::string>(&object)) return *val;
+
+  return "something wrong";
 }
 
 bool Interpreter::endsWithZero(std::string& text, size_t pos) {
