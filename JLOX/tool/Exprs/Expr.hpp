@@ -9,41 +9,44 @@ class Binary;
 class Grouping;
 class Literal;
 class Unary;
+class Variable;
 
 class Expr {
 public:
   virtual ~Expr() = default;
-  virtual std::string accept(VisitorString&) = 0;
-  virtual object accept(VisitorObject&) = 0;
+  virtual std::string accept(VisitorExprString&) = 0;
+  virtual Object accept(VisitorExprObject&) = 0;
 };
 
 class VisitorExprString {
 public:
-  virtual std::string VisitBinary(Binary& expr) = 0;
-  virtual std::string VisitGrouping(Grouping& expr) = 0;
-  virtual std::string VisitLiteral(Literal& expr) = 0;
-  virtual std::string VisitUnary(Unary& expr) = 0;
+  virtual std::string VisitBinaryExpr(Binary& expr) = 0;
+  virtual std::string VisitGroupingExpr(Grouping& expr) = 0;
+  virtual std::string VisitLiteralExpr(Literal& expr) = 0;
+  virtual std::string VisitUnaryExpr(Unary& expr) = 0;
+  virtual std::string VisitVariableExpr(Variable& expr) = 0;
 };
 
 class VisitorExprObject {
 public:
-  virtual object VisitBinary(Binary& expr) = 0;
-  virtual object VisitGrouping(Grouping& expr) = 0;
-  virtual object VisitLiteral(Literal& expr) = 0;
-  virtual object VisitUnary(Unary& expr) = 0;
+  virtual Object VisitBinaryExpr(Binary& expr) = 0;
+  virtual Object VisitGroupingExpr(Grouping& expr) = 0;
+  virtual Object VisitLiteralExpr(Literal& expr) = 0;
+  virtual Object VisitUnaryExpr(Unary& expr) = 0;
+  virtual Object VisitVariableExpr(Variable& expr) = 0;
 };
 
 class Binary : public Expr {
 public:
   Binary(std::unique_ptr<Expr> left, Token op, std::unique_ptr<Expr> right) : 
-      left(std::move(left)), op(std::move(op)), right(std::move(right)){}
+    left(std::move(left)), op(std::move(op)), right(std::move(right)){}
 
   std::string accept(VisitorExprString& visitor) override {
-    return visitor.VisitBinary(*this);
+    return visitor.VisitBinaryExpr(*this);
   }
 
-  object accept(VisitorExprObject& visitor) override {
-    return visitor.VisitBinary(*this);
+  Object accept(VisitorExprObject& visitor) override {
+    return visitor.VisitBinaryExpr(*this);
   }
 
   std::unique_ptr<Expr> left;
@@ -54,14 +57,14 @@ public:
 class Grouping : public Expr {
 public:
   Grouping(std::unique_ptr<Expr> expression) : 
-      expression(std::move(expression)){}
+    expression(std::move(expression)){}
 
   std::string accept(VisitorExprString& visitor) override {
-    return visitor.VisitGrouping(*this);
+    return visitor.VisitGroupingExpr(*this);
   }
 
-  object accept(VisitorExprObject& visitor) override {
-    return visitor.VisitGrouping(*this);
+  Object accept(VisitorExprObject& visitor) override {
+    return visitor.VisitGroupingExpr(*this);
   }
 
   std::unique_ptr<Expr> expression;
@@ -70,14 +73,14 @@ public:
 class Literal : public Expr {
 public:
   Literal(Object value) : 
-      value(std::move(value)){}
+    value(std::move(value)){}
 
   std::string accept(VisitorExprString& visitor) override {
-    return visitor.VisitLiteral(*this);
+    return visitor.VisitLiteralExpr(*this);
   }
 
-  object accept(VisitorExprObject& visitor) override {
-    return visitor.VisitLiteral(*this);
+  Object accept(VisitorExprObject& visitor) override {
+    return visitor.VisitLiteralExpr(*this);
   }
 
   Object value;
@@ -86,17 +89,33 @@ public:
 class Unary : public Expr {
 public:
   Unary(Token op, std::unique_ptr<Expr> right) : 
-      op(std::move(op)), right(std::move(right)){}
+    op(std::move(op)), right(std::move(right)){}
 
   std::string accept(VisitorExprString& visitor) override {
-    return visitor.VisitUnary(*this);
+    return visitor.VisitUnaryExpr(*this);
   }
 
-  object accept(VisitorExprObject& visitor) override {
-    return visitor.VisitUnary(*this);
+  Object accept(VisitorExprObject& visitor) override {
+    return visitor.VisitUnaryExpr(*this);
   }
 
   Token op;
   std::unique_ptr<Expr> right;
+};
+
+class Variable : public Expr {
+public:
+  Variable(Token name) : 
+    name(std::move(name)){}
+
+  std::string accept(VisitorExprString& visitor) override {
+    return visitor.VisitVariableExpr(*this);
+  }
+
+  Object accept(VisitorExprObject& visitor) override {
+    return visitor.VisitVariableExpr(*this);
+  }
+
+  Token name;
 };
 

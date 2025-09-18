@@ -77,7 +77,7 @@ void defineType(std::ofstream& file, std::string basename, std::string classname
     }
     file << return_type;
     file << " accept(Visitor" << basename << visitor << "& " << "visitor) override {\n";
-    file << "    return visitor.Visit" << classname << "(*this);\n";
+    file << "    return visitor.Visit" << classname << basename << "(*this);\n";
     file << "  }\n\n";
   }
 
@@ -99,7 +99,7 @@ void defineVisitor(std::ofstream& file, std::string basename, std::vector<std::s
     } else {
       file << return_type << " ";
     }
-    file << "Visit" << classname << "(";
+    file << "Visit" << classname << basename << "(";
     file << classname << "& " << lower(basename); 
     file << ") = 0;\n";
   }
@@ -143,7 +143,7 @@ void defineAST(std::string output_dir, std::string basename, std::vector<std::st
       file << "std::";
     }
     file << return_type;
-    file << " accept(Visitor" << visitor << "&) = 0;\n";
+    file << " accept(Visitor" << basename << visitor << "&) = 0;\n";
   }
   file << "};\n\n";
 
@@ -168,11 +168,13 @@ int main(int argc, char** argv) {
     "Binary:Expr left,Token op,Expr right",
     "Grouping:Expr expression",
     "Literal:Object value",
-    "Unary:Token op,Expr right"
+    "Unary:Token op,Expr right",
+    "Variable:Token name"
   }, {"String", "Object"});
 
   defineAST(argv[1], "Stmt", {
     "Expression:Expr expression",
-    "Print:Expr expression"
+    "Print:Expr expression",
+    "Var:Token name,Expr initializer"
   }, {"Void","Object"});
 }

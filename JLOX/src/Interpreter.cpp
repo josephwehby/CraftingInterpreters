@@ -14,7 +14,7 @@ void Interpreter::execute(const std::unique_ptr<Stmt>& stmt) {
   stmt->accept(*this);
 }
 
-Object Interpreter::VisitBinary(Binary& expr) {
+Object Interpreter::VisitBinaryExpr(Binary& expr) {
   Object left = evaluate(*expr.left);
   Object right = evaluate(*expr.right);
 
@@ -61,17 +61,17 @@ Object Interpreter::VisitBinary(Binary& expr) {
   return {};
 }
 
-Object Interpreter::VisitGrouping(Grouping& expr) {
+Object Interpreter::VisitGroupingExpr(Grouping& expr) {
   return evaluate(*expr.expression);
 }
 
 
-Object Interpreter::VisitLiteral(Literal& expr) {
+Object Interpreter::VisitLiteralExpr(Literal& expr) {
   return expr.value;
 }
 
 
-Object Interpreter::VisitUnary(Unary& expr) {
+Object Interpreter::VisitUnaryExpr(Unary& expr) {
   Object right = evaluate(*expr.right);
 
   switch (expr.op.type) {
@@ -89,13 +89,26 @@ Object Interpreter::VisitUnary(Unary& expr) {
   return {};
 }
 
-void Interpreter::VisitExpression(Expression& stmt) {
+Object Interpreter::VisitVariableExpr(Variable& expr) {
+  return env.get(expr.name);
+}
+
+void Interpreter::VisitExpressionStmt(Expression& stmt) {
   evaluate(*stmt.expression);
 }
 
-void Interpreter::VisitPrint(Print& stmt) {
+void Interpreter::VisitPrintStmt(Print& stmt) {
   Object value = evaluate(*stmt.expression);
   std::cout << stringify(value) << std::endl;
+}
+
+void Interpreter::VisitVarStmt(Var& stmt) {
+  Object value = std::monostate{};
+  if (stmt.initializer != nullptr) {
+    value = evaluate(*stmt.initializer);
+  }
+
+  env.define(stmt.name.lexeme, value);
 }
 
 Object Interpreter::evaluate(Expr& expr) {

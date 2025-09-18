@@ -1,38 +1,39 @@
 #pragma once
 
 #include <memory>
-
-#include "Object.hpp"
 #include "Token.hpp"
 
-class VisitorString;
-class VisitorObject;
+class VisitorExprString;
+class VisitorExprObject;
 class Binary;
 class Grouping;
 class Literal;
 class Unary;
+class Variable;
 
 class Expr {
 public:
   virtual ~Expr() = default;
-  virtual std::string accept(VisitorString&) = 0;
-  virtual Object accept(VisitorObject&) = 0;
+  virtual std::string accept(VisitorExprString&) = 0;
+  virtual Object accept(VisitorExprObject&) = 0;
 };
 
-class VisitorString {
+class VisitorExprString {
 public:
-  virtual std::string VisitBinary(Binary& expr) = 0;
-  virtual std::string VisitGrouping(Grouping& expr) = 0;
-  virtual std::string VisitLiteral(Literal& expr) = 0;
-  virtual std::string VisitUnary(Unary& expr) = 0;
+  virtual std::string VisitBinaryExpr(Binary& expr) = 0;
+  virtual std::string VisitGroupingExpr(Grouping& expr) = 0;
+  virtual std::string VisitLiteralExpr(Literal& expr) = 0;
+  virtual std::string VisitUnaryExpr(Unary& expr) = 0;
+  virtual std::string VisitVariableExpr(Variable& expr) = 0;
 };
 
-class VisitorObject {
+class VisitorExprObject {
 public:
-  virtual Object VisitBinary(Binary& expr) = 0;
-  virtual Object VisitGrouping(Grouping& expr) = 0;
-  virtual Object VisitLiteral(Literal& expr) = 0;
-  virtual Object VisitUnary(Unary& expr) = 0;
+  virtual Object VisitBinaryExpr(Binary& expr) = 0;
+  virtual Object VisitGroupingExpr(Grouping& expr) = 0;
+  virtual Object VisitLiteralExpr(Literal& expr) = 0;
+  virtual Object VisitUnaryExpr(Unary& expr) = 0;
+  virtual Object VisitVariableExpr(Variable& expr) = 0;
 };
 
 class Binary : public Expr {
@@ -40,12 +41,12 @@ public:
   Binary(std::unique_ptr<Expr> left, Token op, std::unique_ptr<Expr> right) : 
     left(std::move(left)), op(std::move(op)), right(std::move(right)){}
 
-  std::string accept(VisitorString& visitor) override {
-    return visitor.VisitBinary(*this);
+  std::string accept(VisitorExprString& visitor) override {
+    return visitor.VisitBinaryExpr(*this);
   }
 
-  Object accept(VisitorObject& visitor) override {
-    return visitor.VisitBinary(*this);
+  Object accept(VisitorExprObject& visitor) override {
+    return visitor.VisitBinaryExpr(*this);
   }
 
   std::unique_ptr<Expr> left;
@@ -58,12 +59,12 @@ public:
   Grouping(std::unique_ptr<Expr> expression) : 
     expression(std::move(expression)){}
 
-  std::string accept(VisitorString& visitor) override {
-    return visitor.VisitGrouping(*this);
+  std::string accept(VisitorExprString& visitor) override {
+    return visitor.VisitGroupingExpr(*this);
   }
 
-  Object accept(VisitorObject& visitor) override {
-    return visitor.VisitGrouping(*this);
+  Object accept(VisitorExprObject& visitor) override {
+    return visitor.VisitGroupingExpr(*this);
   }
 
   std::unique_ptr<Expr> expression;
@@ -74,12 +75,12 @@ public:
   Literal(Object value) : 
     value(std::move(value)){}
 
-  std::string accept(VisitorString& visitor) override {
-    return visitor.VisitLiteral(*this);
+  std::string accept(VisitorExprString& visitor) override {
+    return visitor.VisitLiteralExpr(*this);
   }
 
-  Object accept(VisitorObject& visitor) override {
-    return visitor.VisitLiteral(*this);
+  Object accept(VisitorExprObject& visitor) override {
+    return visitor.VisitLiteralExpr(*this);
   }
 
   Object value;
@@ -90,15 +91,31 @@ public:
   Unary(Token op, std::unique_ptr<Expr> right) : 
     op(std::move(op)), right(std::move(right)){}
 
-  std::string accept(VisitorString& visitor) override {
-    return visitor.VisitUnary(*this);
+  std::string accept(VisitorExprString& visitor) override {
+    return visitor.VisitUnaryExpr(*this);
   }
 
-  Object accept(VisitorObject& visitor) override {
-    return visitor.VisitUnary(*this);
+  Object accept(VisitorExprObject& visitor) override {
+    return visitor.VisitUnaryExpr(*this);
   }
 
   Token op;
   std::unique_ptr<Expr> right;
+};
+
+class Variable : public Expr {
+public:
+  Variable(Token name) : 
+    name(std::move(name)){}
+
+  std::string accept(VisitorExprString& visitor) override {
+    return visitor.VisitVariableExpr(*this);
+  }
+
+  Object accept(VisitorExprObject& visitor) override {
+    return visitor.VisitVariableExpr(*this);
+  }
+
+  Token name;
 };
 

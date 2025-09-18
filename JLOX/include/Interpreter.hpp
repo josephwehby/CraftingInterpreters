@@ -6,23 +6,26 @@
 #include "Object.hpp"
 #include "Expr.hpp"
 #include "Stmt.hpp"
+#include "Environment.hpp"
 #include "Helper.hpp"
 #include "RuntimeError.hpp"
 #include "Error.hpp"
 
-class Interpreter : public VisitorObject, VisitorStmtVoid {
+class Interpreter : public VisitorExprObject, VisitorStmtVoid {
 public:
 
   void interpret(const std::vector<std::unique_ptr<Stmt>>&);
   void execute(const std::unique_ptr<Stmt>&);
 
-  Object VisitBinary(Binary& expr) override;
-  Object VisitGrouping(Grouping& expr) override;
-  Object VisitLiteral(Literal& expr) override;
-  Object VisitUnary(Unary& expr) override;
+  Object VisitBinaryExpr(Binary&) override;
+  Object VisitGroupingExpr(Grouping&) override;
+  Object VisitLiteralExpr(Literal&) override;
+  Object VisitUnaryExpr(Unary&) override;
+  Object VisitVariableExpr(Variable&) override;
 
-  void VisitExpression(Expression&) override;
-  void VisitPrint(Print&) override;
+  void VisitExpressionStmt(Expression&) override;
+  void VisitPrintStmt(Print&) override;
+  void VisitVarStmt(Var&) override;
 
   Object evaluate(Expr&);
 
@@ -34,4 +37,7 @@ public:
   void checkNumberOperands(Token, const Object&, const Object&);
 
   std::string stringify(Object&);
+private:
+
+  Environment env;
 };
